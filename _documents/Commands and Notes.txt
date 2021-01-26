@@ -1,0 +1,317 @@
+6. Creating the .Net API Project using the dotnet CLI
+dotnet --info :list ra toàn bộ .net core SDK được install trên máy
+dotnet -h :hiển thị toàn bộ commands của dotnet, bao gồm new, sln, add, build ...
+dotnet new -h :tương tự trên
+dotnet new sln :tạo file solution, để dùng cho Visual Studio
+dotnet sln add <foldername> :add folder vào solution đó
+
+
+8. Getting to know the API project files
+dotnet build :build solution
+dotnet run :build và run solution, mặc định http chạy port 5000, https chạy port 5001
+dotnet dev-certs https --trust :trust cert in dev env
+
+
+11. Adding Entity Framework to our project
+intall extension NuGet Gallery hoặc NuGet Package Manager
+install Microsoft.EntityFrameworkCore.Sqlite package version phù hợp với SDK đang được cài đặt
+
+
+13. Creating the Connection string
+vào trang nuget.org, search for dotnet-ef, sau đó chọn đúng version phù hợp với SDK trên máy, copy câu lệnh và chạy, đây là install globally
+dotnet ef migrations add InitialCreate -o Data/Migrations
+    - InitialCreate :tên của migrations
+    - -o :là output
+    - Data/Migrations :nơi file migrations được sinh ra. Phải đặt là "Migrations" không thì sẽ bị lỗi
+install Microsoft.EntityFrameworkCore.Design package version phù hợp với SDK đang được cài đặt
+
+
+14. Creating the database using Entity Framework Code first migrations
+dotnet ef database update :apply những file migrations mới
+install extension SQLite
+shift + command + P, sau đó gõ "sqlite", chọn Open database, chọn datingapp.db
+
+
+17. Saving our code into Source control
+git init
+dotnet new gitignore
+
+
+20. Creating the Angular application
+sudo npm i -g @angular/cli :install angular CLI
+ng new <appname> :tạo một angular application, lowercase
+
+
+21. Running the angular project and reviewing the bootstrap of the app
+npm i
+ng build
+ng serve
+
+
+22. Adding VS Code extensions to work with Angular
+Angular Language Service
+Angular Snippets (Version 9)
+Bracket Pair Colorizer 2
+
+
+24. Adding CORS support in the API
+Cross Origin Resource Sharing
+Thứ tự services ở ConfigureServices không quan trọng, nhưng quan trọng ở Configure (do đây là configure HTTP request Pipline)
+
+
+25. Displaying the fetched users in the browser
+Case sensitive là quan trọng ở Angular html
+
+
+26. Adding bootstrap and font-awesome
+Install ngx-bootstrap ở client bằng câu lệnh: ng add ngx-bootstrap
+Install fontawesome: npm i font-awesome
+
+
+33. Updating the user entity
+dotnet ef migrations add <MigrationName> :add một file migration mới
+
+
+34. Creating a base API controller
+Các controler đều có [ApiController] và [Route("api/[controler]")] nên mình sẽ tạo ra một BaseApiController để các controller khác kế thừa
+
+
+35. Creating an Account Controller with a register endpoint
+[ApiController] tự động sẽ lấy params ở các nơi (FromBody, FromForm, FromHeader, FromQuery, FromRoute,...)
+
+
+36. Using the debugger
+Setup để có được config này ở .vscode/launch.json
+{
+    "name": ".NET Core Attach",
+    "type": "coreclr",
+    "request": "attach",
+    "processId": "${command:pickProcess}"
+}
+
+Đặt breakpoint
+Mở tab debug
+Chọn .NET Core Attach ở góc trên bên trái
+Ấn nút Run (hình tam giác màu xanh)
+Chọn process đang chạy và bắt đầu debug
+
+
+41. Adding a token service
+ConfigureServices hay có thể gọi là Dependency Injection Container
+We will add a service into this DIC. We need to tell DIP what is the service's lifetime, how long should this service be alive for after we started.
+- AddSingleton: it does not stop until the application stops, it continues uses resources
+- AddScoped: it's scoped for the lifetime of the HTTP request
+- AddTransient: ngắn ngủi, chóng toàn
+
+AddSingleton > AddScoped > AddTransient
+
+
+42. Adding the create token logic
+Cài package "System.IdentityModel.Tokens.Jwt" như sau:
+command + shift + P, sau đó gõ nuget, chọn Nuget: Open Nuget Gallery
+
+
+44. Adding the authentication middleware
+Install package "Microsoft.AspNetCore.Authentication.JwtBearer" qua Nuget Gallery
+AddAuthentication ở ConfigureServices
+
+
+45. Adding extension methods
+Tạo folder Extensions
+Tạo ApplicationServiceExtensions
+Tạo IdentityServiceExtensions
+static: không cần phải tạo instance/object của class để dùng class đó
+
+
+48. Creating a nav bar
+ng -h :help, list ra những câu lệnh của angular CLI
+ng <command> -h ví dụ ng generate -h hoặc ng g -h
+cd client/src/app :để tạo component ở đây
+ng g component <name> --skip-tests :để tạo component, và không tạo file tests
+
+
+49. Introduction to Angular template forms
+Ở thẻ <form></form> ta bổ sung thêm đoạn sau để biến form này thành Angular Template Forms #formName="ngForm"
+ví dụ #loginForm="ngForm"
+[] means we receive something from component
+() means we send from template to component
+[()] means 2 ways binding
+
+
+50. Introduction to Angular services
+Tạo folder app/_services
+cd _services
+ng g service <name> --skip-tests :để tạo service
+services are injectable
+"services are singleton, the data that we store inside the service dont get destroy until the app closes down"
+"components are different, when we move from component to component, they are destroyed as soon as they're not in used"
+
+
+52. Using conditionals to show and remove content
+*ngIf="<condition>" ví dụ *ngIf="loggedIn"
+
+
+53. Using the angular bootstrap components - dropdown
+<div class="btn-group" dropdown> thì chữ "dropdown" gọi là directive
+
+
+54. Introduction to observables
+It is new standard for managing async data included in ES7 (ES2016)
+Observables are lazy collections of multiple values over time
+You can think of Observables like a newsletter
+   - Only subcribers of the newsletter receive the newsletter
+   - If no-one subcribes to the newsletter it probably will not be printed
+
+RxJs là Reactive Extention for JavaScript
+4:20 giải thích về Pipe, Map (dùng để transform data, trước khi subcribe nó)
+
+
+55. Persisting the login
+Tạo folder app/_models
+interface ở Angular khác so với ở C#. Ở Angular, mình có thể dùng như một type của variable
+ReplaySubject<User>(2) :như kiểu nạp chồng giá trị, trong trường hợp này, lấy đến 2 giá trị
+
+
+56. Using the async pipe
+| async ở html file. Method này sẽ tự động subscribe và unsubcribe cái observable đó.
+
+
+59. Parent to child communication
+Khai báo @Input ở child component
+
+
+60. Child to parent communication
+@Output() cancelRegister = new EventEmitter(); và
+this.cancelRegister.emit(false);
+
+
+64. Creating some more components
+Add các path vào file app-routing.module.ts, và sử dụng <router-outlet></router-outlet> ở app.component.html
+
+
+65. Adding the nav links
+Sử dụng routerLink ở html, ví dụ routerLink='/lists' routerLink='/messages'
+Thêm property routerLinkActive='active' để link trở nên active (khi routerLink đó được chọn, thì nó sẽ apply 'active' class vào link đó)
+
+
+66. Routing in code
+Ở nav.component.ts, sử dụng navigateByUrl để direct đến link muốn đến
+
+
+67. Adding a toast service for notifications
+npm i ngx-toastr
+Add CSS cho font-awesome và toastr ở file angular.json
+
+
+68. Adding an Angular route guard
+Tạo folder src/app/_guards
+ng g guard <guardName> --skip-tests
+Sau đó chọn loại guard thích hợp, trong bài này chọn CanActivate.
+
+
+69. Adding a dummy route
+ng-container is normally a better technique when you're using conditionals because it does not generate any HTML tag.
+
+
+71. Tidying up the app module by using a shared module
+ng g module <moduleName> --flat
+--flat là để chỉ tạo ra một file, không tạo ra folder.
+
+
+75. Handling server errors
+Comment phần exception middleware ở startup.cs file.
+
+
+76. Exception handling middleware
+Tạo folder API/Errors
+Tạo file ApiException.cs
+Tạo folder API/Middleware
+Tạo file ExceptionMiddleware.cs
+Dùng middleware này ở startup.cs file
+
+
+77. Testing errors in the client
+Tạo folder client/errors
+
+
+78. Adding an error interceptor
+tạo folder app/_interceptors
+ng g interceptor <interceptorName> --skip-tests
+
+
+79. Validation errors
+File tsconfig.json, thêm ở "lib" đoạn "es2019"
+
+
+80. Handling not found
+Tạo component ở trong folder client/error
+ng g c not-found --skip-tests
+
+
+81. Adding a server error page
+ng g c server-error --skip-tests
+
+
+86. Entity Framework relationships
+dotnet ef migrations add <MigrationName> :tự động tạo file migration sau khi thay đổi Models, DataContext
+Fully define relationship bằng cách khai báo ở cả hai model liên quan, thay vì để EF Core tự nhận diện
+
+
+88. Seeding data part one
+Tạo file Data/Seed.cs
+Update method Main trong Program.cs
+
+
+92. Updating the users controller
+Eagle loading, ví dụ như sau
+Ở UserRepository.cs file
+await _context.Users.Include(p => p.Photos).ToListAsync(); để eager load Photos
+
+
+94. Adding AutoMapper
+Tạo folder API/Helpers
+Tạo file AutoMapperProfiles.cs
+Trước đó cần cài AutoMapper.Extensions.Microsoft.DependencyInjection
+AddAutoMapper ở startup.cs
+
+
+95. Using AutoMapper
+Ở AppUser.cs, đặt tên method là GetAge để AutoMapper tự dùng nó khi tính property Age
+
+
+97. Using AutoMapper queryable extensions
+Không dùng method GetAge nữa.
+
+
+102. Adding a member service
+Thêm apiUrl vào 2 files environments.
+
+
+107. Using an interceptor to send the token
+ng g interceptor jwt
+
+
+116. Adding the update functionality
+@ViewChild('editForm') editForm: NgForm;
+it gives access to the NgForm inside the component (inside .ts file)
+Angular uses "name" attribute to track property of the NgForm
+Meanwhile, [(ngModel)] provide 2 ways binding.
+
+
+117. Adding a Can Deactivate route guard
+ng g guard prevent-unsaved-changes
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
